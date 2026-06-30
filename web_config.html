@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>gMicroMC Config</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f5f6fa;--s:#ffffff;--s2:#f0f2f7;--b:#dde1ec;--a:#2563eb;--a2:#7c3aed;
+  --g:#059669;--y:#d97706;--r:#dc2626;--t:#1e2235;--m:#64748b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px}
+header{background:linear-gradient(135deg,#ffffff,#f0f2f7);border-bottom:1px solid var(--b);
+  padding:18px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+h1{font-size:20px;font-weight:700} h1 span{color:var(--a)}
+.badge{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--s2);
+  color:var(--m);border:1px solid var(--b)}
+.hr{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{padding:8px 20px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+.bp{background:var(--a);color:#fff} .bp:hover{background:#3d7ef5;transform:translateY(-1px)}
+.bs{background:var(--s2);color:var(--t);border:1px solid var(--b)} .bs:hover{border-color:var(--a)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.con{max-width:1100px;margin:0 auto;padding:28px 24px 80px}
+.tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--s);border-radius:10px;padding:4px}
+.tab{flex:1;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:13px;
+  font-weight:500;background:transparent;color:var(--m);transition:all .15s}
+.tab.on{background:var(--a);color:#fff} .tab:hover:not(.on){color:var(--t);background:var(--s2)}
+.sec{display:none} .sec.on{display:block}
+.card{background:var(--s);border:1px solid var(--b);border-radius:10px;padding:22px 24px;margin-bottom:16px}
+.ct{font-size:13px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.6px;
+  margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--b)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(380px,1fr))}
+.f{display:flex;flex-direction:column;gap:5px}
+.f label{font-size:12px;font-weight:600;color:var(--m)}
+.f label .u{color:var(--y);font-weight:400;margin-left:4px}
+.f input,.f select{background:var(--s2);border:1px solid var(--b);border-radius:7px;
+  padding:8px 12px;color:var(--t);font-size:13px;outline:none;transition:border-color .15s;width:100%}
+.f input:focus,.f select:focus{border-color:var(--a)}
+.fp{font-family:Consolas,monospace;font-size:12px;color:#0369a1}
+.xyz{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:9px;
+  font-size:13px;font-weight:600;transform:translateY(80px);opacity:0;transition:all .3s;z-index:999;pointer-events:none}
+.toast.on{transform:translateY(0);opacity:1}
+.tok{background:#d1fae5;border:1px solid var(--g);color:var(--g)}
+.ter{background:#fee2e2;border:1px solid var(--r);color:var(--r)}
+.sbar{position:fixed;bottom:0;left:0;right:0;background:var(--s);border-top:1px solid var(--b);
+  padding:8px 32px;font-size:12px;color:var(--m);display:flex;align-items:center;gap:12px}
+.sd{width:7px;height:7px;border-radius:50%;background:var(--g)}
+.sb{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:14px 20px;min-width:160px}
+.sl{font-size:11px;color:var(--m);margin-bottom:6px}
+.sv{font-size:22px;font-weight:700} .su{font-size:11px;color:var(--m)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 12px;border-bottom:1px solid var(--b);color:var(--m)}
+td{padding:7px 12px;border-bottom:1px solid var(--b)}
+.nr{text-align:right;font-family:monospace}
+</style>
+</head>
+<body>
+<header>
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+    <circle cx="14" cy="14" r="13" stroke="#4f8ef7" stroke-width="1.5"/>
+    <path d="M8 14 L14 8 L20 14 L14 20 Z" fill="#4f8ef7" opacity="0.3"/>
+    <circle cx="14" cy="14" r="3" fill="#4f8ef7"/>
+    <circle cx="8" cy="14" r="1.5" fill="#7c5ef7"/>
+    <circle cx="20" cy="14" r="1.5" fill="#7c5ef7"/>
+    <circle cx="14" cy="8" r="1.5" fill="#3ecf8e"/>
+    <circle cx="14" cy="20" r="1.5" fill="#3ecf8e"/>
+  </svg>
+  <h1>g<span>Micro</span>MC</h1>
+  <span class="badge">config.txt editor</span>
+  <div class="hr">
+    <button class="btn bs" onclick="loadCfg()">&#8635; Дахин уншах</button>
+    <button class="btn bp" id="saveBtn" onclick="saveCfg()">&#128190; Хадгалах</button>
+  </div>
+</header>
+
+<div class="con">
+  <div class="tabs">
+    <button class="tab on"  onclick="sw(this,'g')">&#127760; Ерөнхий</button>
+    <button class="tab" onclick="sw(this,'p')">&#9883; Физик</button>
+    <button class="tab" onclick="sw(this,'pc')">&#128300; Пре-хими</button>
+    <button class="tab" onclick="sw(this,'ch')">&#9879; Хими</button>
+    <button class="tab" onclick="sw(this,'d')">&#129516; ДНХ</button>
+    <button class="tab" onclick="sw(this,'r');loadRes()">&#128202; Үр дүн</button>
+  </div>
+
+  <!-- GLOBAL -->
+  <div class="sec on" id="s-g"><div class="card"><div class="ct">Ерөнхий тохиргоо</div>
+    <div class="grid">
+      <div class="f"><label>Device (GPU)</label><input type="number" id="Device" min="0"></div>
+      <div class="f"><label>startStage</label><select id="startStage">
+        <option value="0">0 — Физик</option><option value="1">1 — Пре-хими</option>
+        <option value="2">2 — Хими</option><option value="3">3 — ДНХ хайлт</option>
+      </select></div>
+      <div class="f"><label>outputDir</label><input type="text" id="outputDir" class="fp"></div>
+      <div class="f"><label>NPART</label><input type="number" id="NPART" min="1"></div>
+      <div class="f"><label>NRAND</label><input type="number" id="NRAND" min="1"></div>
+      <div class="f"><label>NTHREAD_PER_BLOCK</label><input type="number" id="NTHREAD_PER_BLOCK" min="1"></div>
+      <div class="f"><label>verbose</label><select id="verbose">
+        <option value="0">0</option><option value="1">1</option>
+        <option value="2">2</option><option value="3">3</option>
+      </select></div>
+      <div class="f"><label>targetEneDep <span class="u">eV</span></label><input type="text" id="targetEneDep"></div>
+    </div>
+  </div></div>
+
+  <!-- PHYSICS -->
+  <div class="sec" id="s-p">
+    <div class="card"><div class="ct">GPU & хэсгийн тоо</div><div class="grid">
+      <div class="f"><label>GPUBaseMemory <span class="u">MB</span></label><input type="number" id="GPUBaseMemory" min="1"></div>
+      <div class="f"><label>nSecondPer100keV</label><input type="number" id="nSecondPer100keV" min="1"></div>
+      <div class="f"><label>nRadicalsPer100keV</label><input type="number" id="nRadicalsPer100keV" min="1"></div>
+    </div></div>
+    <div class="card"><div class="ct">Огтлолцлын хүснэгтийн файлууд</div><div class="grid g2">
+      <div class="f"><label>pCSData</label><input type="text" id="pCSData" class="fp"></div>
+      <div class="f"><label>eDACSData</label><input type="text" id="eDACSData" class="fp"></div>
+      <div class="f"><label>eIonCSData</label><input type="text" id="eIonCSData" class="fp"></div>
+      <div class="f"><label>eExcCSData</label><input type="text" id="eExcCSData" class="fp"></div>
+      <div class="f"><label>eElaCSData</label><input type="text" id="eElaCSData" class="fp"></div>
+      <div class="f"><label>eElaDCSData</label><input type="text" id="eElaDCSData" class="fp"></div>
+    </div></div>
+    <div class="card"><div class="ct">Энергийн босго</div><div class="grid">
+      <div class="f"><label>eECutoff <span class="u">eV</span></label><input type="number" id="eECutoff" step="0.1"></div>
+      <div class="f"><label>pECutoff <span class="u">eV</span></label><input type="number" id="pECutoff"></div>
+    </div></div>
+    <div class="card"><div class="ct">Physics World <span style="color:var(--y);font-size:11px">(cm)</span></div>
+      <div class="grid" style="margin-bottom:14px">
+        <div class="f"><label>physicsWorldShape</label><select id="physicsWorldShape">
+          <option value="0">0 — Бөмбөрцөг</option><option value="1">1 — Хайрцаг</option>
+        </select></div>
+      </div>
+      <div class="ct">Хэмжээ (cm)</div><div class="xyz">
+        <div class="f"><label>SizeX</label><input type="number" id="physicsWorldSizeX" step="0.0001"></div>
+        <div class="f"><label>SizeY</label><input type="number" id="physicsWorldSizeY" step="0.0001"></div>
+        <div class="f"><label>SizeZ</label><input type="number" id="physicsWorldSizeZ" step="0.0001"></div>
+      </div>
+      <div class="ct" style="margin-top:14px">Төв (cm)</div><div class="xyz">
+        <div class="f"><label>CenterX</label><input type="number" id="physicsWorldCenterX" step="0.001"></div>
+        <div class="f"><label>CenterY</label><input type="number" id="physicsWorldCenterY" step="0.001"></div>
+        <div class="f"><label>CenterZ</label><input type="number" id="physicsWorldCenterZ" step="0.001"></div>
+      </div>
+    </div>
+    <div class="card"><div class="ct">ROI <span style="color:var(--y);font-size:11px">(um)</span></div>
+      <div class="grid" style="margin-bottom:14px">
+        <div class="f"><label>ROIShape</label><select id="ROIShape">
+          <option value="0">0 — Бөмбөрцөг</option><option value="1">1 — Хайрцаг</option>
+        </select></div>
+      </div>
+      <div class="ct">Хэмжээ (um)</div><div class="xyz">
+        <div class="f"><label>SizeX</label><input type="number" id="ROISizeX" step="0.1"></div>
+        <div class="f"><label>SizeY</label><input type="number" id="ROISizeY" step="0.1"></div>
+        <div class="f"><label>SizeZ</label><input type="number" id="ROISizeZ" step="0.1"></div>
+      </div>
+      <div class="ct" style="margin-top:14px">Төв (um)</div><div class="xyz">
+        <div class="f"><label>CenterX</label><input type="number" id="ROICenterX" step="0.1"></div>
+        <div class="f"><label>CenterY</label><input type="number" id="ROICenterY" step="0.1"></div>
+        <div class="f"><label>CenterZ</label><input type="number" id="ROICenterZ" step="0.1"></div>
+      </div>
+    </div>
+    <div class="card"><div class="ct">Эх үүсгүүр</div><div class="grid">
+      <div class="f"><label>nPar</label><input type="number" id="nPar" min="1"></div>
+      <div class="f"><label>maxRun</label><input type="number" id="maxRun" min="1"></div>
+      <div class="f"><label>sourceModel</label><select id="sourceModel">
+        <option value="0">0 — PSF файл</option><option value="1">1 — Бөмбөрцөгт санамсаргүй</option>
+      </select></div>
+      <div class="f"><label>sourceEnergyModel</label><select id="sourceEnergyModel">
+        <option value="0">0 — Жигд (Emin~Emax)</option><option value="1">1 — Гистограм</option>
+      </select></div>
+      <div class="f"><label>sourceFile</label><input type="text" id="sourceFile" class="fp"></div>
+      <div class="f"><label>sourceSampleDim <span class="u">cm</span></label><input type="number" id="sourceSampleDim" step="0.000001"></div>
+      <div class="f"><label>sourcePType</label><input type="number" id="sourcePType" min="0"></div>
+      <div class="f"><label>sourceA</label><input type="number" id="sourceA" step="0.0001"></div>
+      <div class="f"><label>sourceEmin <span class="u">eV</span></label><input type="text" id="sourceEmin"></div>
+      <div class="f"><label>sourceEmax <span class="u">eV</span></label><input type="text" id="sourceEmax"></div>
+    </div></div>
+    <div class="card"><div class="ct">Гаралтын файлууд (физик)</div><div class="grid g2">
+      <div class="f"><label>fileForIntOutput</label><input type="text" id="fileForIntOutput" class="fp"></div>
+      <div class="f"><label>fileForFloatOutput</label><input type="text" id="fileForFloatOutput" class="fp"></div>
+      <div class="f"><label>fileForTotalEvent</label><input type="text" id="fileForTotalEvent" class="fp"></div>
+      <div class="f"><label>fileForEnergy</label><input type="text" id="fileForEnergy" class="fp"></div>
+    </div></div>
+  </div>
+
+  <!-- PRECHEM -->
+  <div class="sec" id="s-pc"><div class="card"><div class="ct">Пре-хими үе шат</div><div class="grid g2">
+    <div class="f"><label>fileForBranchInfo</label><input type="text" id="fileForBranchInfo" class="fp"></div>
+    <div class="f"><label>fileForRecombineInfo</label><input type="text" id="fileForRecombineInfo" class="fp"></div>
+    <div class="f"><label>fileForIntInput</label><input type="text" id="fileForIntInput" class="fp"></div>
+    <div class="f"><label>fileForFloatInput</label><input type="text" id="fileForFloatInput" class="fp"></div>
+    <div class="f"><label>fileForOutput</label><input type="text" id="fileForOutput" class="fp"></div>
+  </div></div></div>
+
+  <!-- CHEM -->
+  <div class="sec" id="s-ch">
+    <div class="card"><div class="ct">Хими үе шат</div><div class="grid g2">
+      <div class="f"><label>fileForSpecInfo</label><input type="text" id="fileForSpecInfo" class="fp"></div>
+      <div class="f"><label>fileForReactionInfo</label><input type="text" id="fileForReactionInfo" class="fp"></div>
+      <div class="f"><label>useConstantRadius</label><select id="useConstantRadius">
+        <option value="0">0 — Цаг хугацаатай өөрчлөгдөнө</option><option value="1">1 — Тогтмол</option>
+      </select></div>
+      <div class="f"><label>fileForRadicalInfo</label><input type="text" id="fileForRadicalInfo" class="fp"></div>
+    </div></div>
+    <div class="card"><div class="ct">Цаг хугацааны параметрүүд</div><div class="grid">
+      <div class="f"><label>chemicalTime <span class="u">ps</span></label><input type="number" id="chemicalTime" min="0"></div>
+      <div class="f"><label>DNAReactTime <span class="u">ps</span></label><input type="number" id="DNAReactTime" min="0"></div>
+      <div class="f"><label>saveInterval <span class="u">ps</span></label><input type="number" id="saveInterval" min="1"></div>
+      <div class="f"><label>chemROI <span class="u">nm</span></label><input type="number" id="chemROI" min="0"></div>
+    </div></div>
+    <div class="card"><div class="ct">Гаралтын файлууд (хими)</div><div class="grid g2">
+      <div class="f"><label>timeFileForNvsTime</label><input type="text" id="timeFileForNvsTime" class="fp"></div>
+      <div class="f"><label>numberFileForNvsTime</label><input type="text" id="numberFileForNvsTime" class="fp"></div>
+      <div class="f"><label>fileForChemOutput</label><input type="text" id="fileForChemOutput" class="fp"></div>
+    </div></div>
+  </div>
+
+  <!-- DNA -->
+  <div class="sec" id="s-d">
+    <div class="card"><div class="ct">ДНХ бүтцийн файлууд</div><div class="grid g2">
+      <div class="f"><label>bentChromatin</label><input type="text" id="bentChromatin" class="fp"></div>
+      <div class="f"><label>bentHistone</label><input type="text" id="bentHistone" class="fp"></div>
+      <div class="f"><label>straightChromatin</label><input type="text" id="straightChromatin" class="fp"></div>
+      <div class="f"><label>straightHistone</label><input type="text" id="straightHistone" class="fp"></div>
+      <div class="f"><label>wholeDNA (.bin)</label><input type="text" id="wholeDNA" class="fp"></div>
+    </div></div>
+    <div class="card"><div class="ct">ДНХ гэмтлийн тохиргоо</div><div class="grid">
+      <div class="f"><label>fileForChemPos</label><input type="text" id="fileForChemPos" class="fp"></div>
+      <div class="f"><label>fileForOutputDamage</label><input type="text" id="fileForOutputDamage" class="fp"></div>
+      <div class="f"><label>compareEnergy <span class="u">eV</span></label><input type="number" id="compareEnergy" min="0"></div>
+      <div class="f"><label>repTimes</label><input type="number" id="repTimes" min="1"></div>
+      <div class="f"><label>probChem</label><input type="number" id="probChem" min="0" max="1" step="0.01"></div>
+    </div></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="sec" id="s-r">
+    <div id="rl" style="text-align:center;padding:60px;color:var(--m)">&#9203; Уншиж байна...</div>
+    <div id="rc" style="display:none">
+
+      <div class="card" id="cp" style="display:none">
+        <div class="ct">&#9883; Физик — энергийн хуримтлал</div>
+        <div id="ps" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px"></div>
+        <table><thead><tr>
+          <th>#</th><th style="text-align:right">Энерги (eV)</th><th style="text-align:right">LET (eV/cm)</th>
+        </tr></thead><tbody id="pr"></tbody></table>
+        <div style="margin-top:20px">
+          <div class="ct">Эх үүсгүүрийн мэдээлэл</div>
+          <table><thead><tr>
+            <th>#</th><th>x (cm)</th><th>y (cm)</th><th>z (cm)</th><th>Чиглэл</th><th style="text-align:right">Энерги (eV)</th>
+          </tr></thead><tbody id="sr"></tbody></table>
+        </div>
+      </div>
+
+      <div class="card" id="cc" style="display:none">
+        <div class="ct">&#9879; Хими — радикалын тоо vs цаг хугацаа</div>
+        <canvas id="cht" style="max-height:360px"></canvas>
+      </div>
+
+      <div class="card" id="cd" style="display:none">
+        <div class="ct">&#129516; ДНХ гэмтэл</div>
+        <div id="dw"></div>
+      </div>
+
+      <div id="re" style="display:none;text-align:center;padding:60px;color:var(--m)">
+        &#8505; Гаралтын файл олдсонгүй.<br>
+        <span style="font-size:12px">Симуляц ажиллуулсны дараа үр дүн харагдана.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="sbar">
+  <div class="sd"></div>
+  <span id="st">config.txt бэлэн</span>
+  <span style="margin-left:auto;font-family:monospace;color:var(--a)">http://localhost:8080</span>
+</div>
+
+<script>
+var cfg={}, cht=null;
+var KN=['Device','startStage','NPART','NRAND','NTHREAD_PER_BLOCK','verbose',
+  'GPUBaseMemory','nSecondPer100keV','nRadicalsPer100keV','eECutoff','pECutoff',
+  'physicsWorldShape','physicsWorldSizeX','physicsWorldSizeY','physicsWorldSizeZ',
+  'physicsWorldCenterX','physicsWorldCenterY','physicsWorldCenterZ',
+  'ROIShape','ROISizeX','ROISizeY','ROISizeZ','ROICenterX','ROICenterY','ROICenterZ',
+  'nPar','maxRun','sourceModel','sourceEnergyModel','sourceSampleDim','sourcePType','sourceA',
+  'useConstantRadius','chemicalTime','DNAReactTime','saveInterval','chemROI',
+  'compareEnergy','repTimes','probChem'];
+var KS=['targetEneDep','sourceEmin','sourceEmax'];
+var KT=['outputDir','pCSData','eDACSData','eIonCSData','eExcCSData','eElaCSData','eElaDCSData',
+  'sourceFile','fileForIntOutput','fileForFloatOutput','fileForTotalEvent','fileForEnergy',
+  'fileForBranchInfo','fileForRecombineInfo','fileForIntInput','fileForFloatInput','fileForOutput',
+  'fileForSpecInfo','fileForReactionInfo','fileForRadicalInfo','timeFileForNvsTime',
+  'numberFileForNvsTime','fileForChemOutput','bentChromatin','bentHistone','straightChromatin',
+  'straightHistone','wholeDNA','fileForChemPos','fileForOutputDamage'];
+var SPEC=['e-','.OH','.H','H3O+','H2','OH-','H2O2','O2','.HO2','O2-','HO2-'];
+var CLR=['#4f8ef7','#3ecf8e','#f5a623','#f04f55','#a78bfa',
+         '#34d399','#fb923c','#60a5fa','#f472b6','#a3e635','#38bdf8'];
+
+function sw(btn,id){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on')});
+  document.getElementById('s-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+function toast(msg,tp){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast on '+(tp||'tok');
+  setTimeout(function(){t.className='toast'},3000);
+}
+function ss(msg){document.getElementById('st').textContent=msg}
+
+async function loadCfg(){
+  ss('Уншиж байна...');
+  try{
+    cfg=await(await fetch('/api/config')).json();
+    KN.forEach(function(k){var e=document.getElementById(k);if(e)e.value=cfg[k]});
+    KS.forEach(function(k){var e=document.getElementById(k);if(e)e.value=cfg[k]});
+    KT.forEach(function(k){var e=document.getElementById(k);if(e)e.value=cfg[k]});
+    ss('Уншигдлаа'); toast('Тохиргоо уншигдлаа');
+  }catch(e){ss('Алдаа: '+e.message);toast('Унших амжилтгүй','ter')}
+}
+
+async function saveCfg(){
+  var btn=document.getElementById('saveBtn');
+  btn.disabled=true; btn.textContent='Хадгалж байна...';
+  ss('Хадгалж байна...');
+  try{
+    var d={};
+    KN.forEach(function(k){var e=document.getElementById(k);if(e)d[k]=Number(e.value)});
+    KS.forEach(function(k){var e=document.getElementById(k);if(e)d[k]=parseFloat(e.value)});
+    KT.forEach(function(k){var e=document.getElementById(k);if(e)d[k]=e.value});
+    var r=await(await fetch('/api/config',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})).json();
+    if(r.ok){toast('config.txt хадгалагдлаа!');ss('Хадгалагдлаа — '+new Date().toLocaleTimeString())}
+    else throw new Error(r.error||'error');
+  }catch(e){toast('Хадгалах амжилтгүй: '+e.message,'ter');ss('Алдаа: '+e.message)}
+  finally{btn.disabled=false;btn.textContent='&#128190; Хадгалах'}
+}
+
+function sbox(lbl,val,unit,col){
+  return '<div class="sb"><div class="sl">'+lbl+'</div>'
+    +'<div class="sv" style="color:'+(col||'var(--a)')+'">'+val+'</div>'
+    +(unit?'<div class="su">'+unit+'</div>':'')+'</div>';
+}
+
+async function loadRes(){
+  document.getElementById('rl').style.display='block';
+  document.getElementById('rc').style.display='none';
+  try{
+    var d=await(await fetch('/api/results')).json();
+    renderRes(d);
+  }catch(e){document.getElementById('rl').textContent='Алдаа: '+e.message;return}
+  document.getElementById('rl').style.display='none';
+  document.getElementById('rc').style.display='block';
+}
+
+function renderRes(d){
+  var any=false;
+
+  // Physics
+  if(d.physics&&d.physics.energy&&d.physics.energy.length>0){
+    any=true;
+    document.getElementById('cp').style.display='block';
+    var en=d.physics.energy;
+    var tE=en.reduce(function(a,b){return a+b.energy_eV},0);
+    var aL=en.reduce(function(a,b){return a+b.LET},0)/en.length;
+    document.getElementById('ps').innerHTML=
+      sbox('Нийт энерги',tE.toExponential(3),'eV','var(--g)')+
+      sbox('Дундаж LET',aL.toExponential(3),'eV/cm','var(--y)')+
+      sbox('Run тоо',en.length,'');
+    document.getElementById('pr').innerHTML=en.map(function(r,i){
+      return '<tr><td class="nr" style="color:var(--m)">'+(i+1)+'</td>'
+        +'<td class="nr" style="color:var(--g)">'+r.energy_eV.toFixed(4)+'</td>'
+        +'<td class="nr" style="color:var(--y)">'+r.LET.toFixed(4)+'</td></tr>';
+    }).join('');
+    if(d.physics.source&&d.physics.source.length>0){
+      document.getElementById('sr').innerHTML=d.physics.source.map(function(s){
+        return '<tr><td style="color:var(--m)">'+s.index+'</td>'
+          +'<td class="nr">'+s.x.toExponential(3)+'</td>'
+          +'<td class="nr">'+s.y.toExponential(3)+'</td>'
+          +'<td class="nr">'+s.z.toExponential(3)+'</td>'
+          +'<td style="font-family:monospace;font-size:12px">('+s.dx.toFixed(3)+','+s.dy.toFixed(3)+','+s.dz.toFixed(3)+')</td>'
+          +'<td class="nr" style="color:var(--a)">'+(s.energy_eV?s.energy_eV.toExponential(3):'?')+'</td></tr>';
+      }).join('');
+    }
+  }
+
+  // Chem
+  if(d.chem&&d.chem.length>0){
+    any=true;
+    document.getElementById('cc').style.display='block';
+    if(cht){cht.destroy();cht=null}
+    var ctx=document.getElementById('cht').getContext('2d');
+    cht=new Chart(ctx,{type:'line',
+      data:{labels:d.chem.map(function(r){return r.time_ps}),
+        datasets:SPEC.map(function(sp,i){return{
+          label:sp,borderColor:CLR[i],backgroundColor:CLR[i]+'22',
+          data:d.chem.map(function(r){return r[sp]||0}),
+          borderWidth:2,pointRadius:d.chem.length>80?0:3,tension:0.3
+        }})},
+      options:{responsive:true,
+        plugins:{legend:{labels:{color:'#1e2235',font:{size:12}}},
+          tooltip:{mode:'index',intersect:false}},
+        scales:{
+          x:{title:{display:true,text:'Цаг (ps)',color:'#6b7280'},
+             ticks:{color:'#64748b',maxTicksLimit:12},grid:{color:'#dde1ec'}},
+          y:{title:{display:true,text:'Радикалын тоо',color:'#64748b'},
+             ticks:{color:'#64748b'},grid:{color:'#dde1ec'}}}}});
+  }
+
+  // DNA
+  if(d.dna&&d.dna.length>0){
+    any=true;
+    document.getElementById('cd').style.display='block';
+    var h=d.dna.map(function(g){
+      var t=g.type==='damage'?'Гэмтлийн ангилал':'Хүндрэлийн ангилал';
+      var mx=Math.max.apply(null,g.values.concat([1]));
+      return '<div style="margin-bottom:20px"><div style="font-size:12px;font-weight:700;'
+        +'color:var(--m);margin-bottom:12px;text-transform:uppercase">'+t+'</div>'
+        +g.labels.map(function(l,i){
+          var pct=(g.values[i]/mx*100).toFixed(1);
+          return '<div style="margin-bottom:10px">'
+            +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">'
+            +'<span style="font-weight:600">'+l+'</span>'
+            +'<span style="color:'+CLR[i]+';font-weight:700">'+g.values[i]+'</span></div>'
+            +'<div style="background:var(--s2);border-radius:4px;height:10px;overflow:hidden">'
+            +'<div style="background:'+CLR[i]+';height:100%;width:'+pct+'%;border-radius:4px"></div>'
+            +'</div></div>';
+        }).join('')+'</div>';
+    }).join('<hr style="border-color:var(--b);margin:20px 0">');
+    document.getElementById('dw').innerHTML=h;
+  }
+
+  if(!any) document.getElementById('re').style.display='block';
+}
+
+loadCfg();
+</script>
+</body>
+</html>
